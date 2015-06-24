@@ -19,7 +19,7 @@
 (defun subscribe_valve (msg)
   (let ((trans
          (send *tfl* :lookup-transform
-               "/odom"
+               "/WAIST_LINK0"
                (send msg :header :frame_id)
                (ros::time 0))))
     (setq *target-coords* (send (send trans :copy-worldcoords) :transform (ros::tf-pose->coords (send msg :pose))))
@@ -43,7 +43,7 @@
 
 (defun walk-to-target
   ()
-  (setq *stand-point* (v- (send (send *target-coords* :copy-worldcoords) :pos) (float-vector 500 0 0)))
+  (setq *stand-point* (v- (send (send *target-coords* :copy-worldcoords) :pos) (float-vector 500 100 0)))
   (send *ri* :go-pos (* (elt *stand-point* 0) 0.001) (* (elt *stand-point* 1) 0.001) 0)
 )
 
@@ -82,4 +82,13 @@
   (send *ri* :stop-st)
   (unix::sleep 10)
   (model2real)
+  )
+
+(defun reset
+  ()
+  (send *ri* :stop-auto-balancer)
+  (send *ri* :stop-st)
+  (send *ri* :angle-vector (send *robot* :init-pose) 3000)
+  (setq *target-coords* (make-coords))
+  (setq *finish-flag* nil)
   )
