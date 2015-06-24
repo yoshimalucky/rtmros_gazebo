@@ -73,10 +73,10 @@
 (defun main
   ()
   (reset-pose)
-  (send *ri* :calibrate-inertia-sensor)
   (unix::sleep 5)
   (send *ri* :start-auto-balancer)
   (send *ri* :start-st)
+  (send *ri* :calibrate-inertia-sensor)
   (test-reaching)
   (walk-to-target)
   (send *ri* :stop-st)
