@@ -275,7 +275,8 @@ void IOBPlugin::Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
               gzerr << ln << " not found\n";
             } else {
               // Get imu sensors
-              msi.sensor = boost::dynamic_pointer_cast<sensors::ImuSensor>
+              // msi.sensor = boost::dynamic_pointer_cast<sensors::ImuSensor>
+              msi.sensor = std::dynamic_pointer_cast<sensors::ImuSensor>
                 (sensors::SensorManager::Instance()->GetSensor
                  (this->world->GetName() + "::" + msi.link->GetScopedName() + "::" + msi.sensor_name));
 
@@ -897,9 +898,16 @@ void IOBPlugin::GetRobotStates(const common::Time &_curTime){
     if(!!sp) {
       this->robotState.Imus[i].name = this->imuSensorNames[i];
       this->robotState.Imus[i].frame_id = it->second.frame_id;
-      math::Vector3 wLocal = sp->GetAngularVelocity();
-      math::Vector3 accel = sp->GetLinearAcceleration();
-      math::Quaternion imuRot = sp->GetOrientation();
+
+      // deprecated
+      // math::Vector3 wLocal = sp->GetAngularVelocity();
+      // math::Vector3 accel = sp->GetLinearAcceleration();
+      // math::Quaternion imuRot = sp->GetOrientation();
+
+      math::Vector3 wLocal = sp->AngularVelocity();
+      math::Vector3 accel = sp->LinearAcceleration();
+      math::Quaternion imuRot = sp->Orientation();
+
       this->robotState.Imus[i].angular_velocity.x = wLocal.x;
       this->robotState.Imus[i].angular_velocity.y = wLocal.y;
       this->robotState.Imus[i].angular_velocity.z = wLocal.z;
@@ -947,8 +955,11 @@ void IOBPlugin::UpdatePID_Velocity_Control(double _dt) {
       static_cast<double>(this->robotState.kpv_position[i]) * this->errorTerms[i].q_p +
       static_cast<double>(this->robotState.kpv_velocity[i]) * this->errorTerms[i].qd_p;
 
-    // update max force
-    this->joints[i]->SetMaxForce(0, this->joints[i]->GetEffortLimit(0));
+    // update max force (deprecated)
+    // this->joints[i]->SetMaxForce(0, this->joints[i]->GetEffortLimit(0));
+    // update effort limit (gazebo7)
+    this->joints[i]->SetEffortLimit(0, this->joints[i]->GetEffortLimit(0));
+
     // clamp max velocity
     j_velocity = math::clamp(j_velocity, -max_vel, max_vel);
 #if 0

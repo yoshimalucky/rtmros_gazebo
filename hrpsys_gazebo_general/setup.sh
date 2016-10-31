@@ -1,7 +1,10 @@
 #!/bin/sh
 
 GAZEBO_SETUP_SH=/usr/share/gazebo/setup.sh
-DRCSIM_SETUP_SH=/usr/share/drcsim/setup.sh
+
+## for drcsim source install
+# DRCSIM_SETUP_SH=$HOME/ros/indigo/build/drcsim_model_resources/setup.sh
+DRCSIM_SETUP_SH=/usr/share/drcsim/setup.sh # for deb
 
 if [ ! -e $GAZEBO_SETUP_SH ]; then
     echo -e "\e[31mgazebo should be installed for using hrpsys_gazebo\e[m"

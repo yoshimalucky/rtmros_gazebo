@@ -2,6 +2,8 @@
 #include <vector>
 
 #include <boost/thread/mutex.hpp>
+#include <boost/shared_ptr.hpp> // added
+#include <memory>
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
@@ -44,7 +46,7 @@
 
 namespace gazebo
 {
-  typedef boost::shared_ptr< sensors::ImuSensor > ImuSensorPtr;
+  typedef std::shared_ptr< sensors::ImuSensor > ImuSensorPtr;
   typedef hrpsys_gazebo_msgs::JointCommand JointCommand;
   typedef hrpsys_gazebo_msgs::RobotState RobotState;
   typedef boost::shared_ptr< math::Pose > PosePtr;
